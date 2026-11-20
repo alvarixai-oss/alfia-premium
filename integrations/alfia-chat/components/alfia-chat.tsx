@@ -58,6 +58,15 @@ function Icon({ kind }: { kind: "close" | "send" | "reset" | "phone" | "whatsapp
   );
 }
 
+/** Render a tiny, safe subset of Markdown without interpreting HTML. */
+function MessageContent({ content }: { content: string }) {
+  return <>{content.split(/(\\*\\*[^*\\n]+\\*\\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={index}>{part.slice(2, -2)}</strong>
+      : <span key={index}>{part}</span>
+  )}</>;
+}
+
 function ContactOptions({ language, messages }: { language: Language; messages: Message[] }) {
   const t = copy[language];
   // A visitor initiates WhatsApp and can review or edit the composed message before sending.
@@ -131,6 +140,8 @@ export default function AlfiaChat() {
   const messageNumber = useRef(0);
   const busyRef = useRef(false);
   const t = copy[language];
+  const lastUserMessage = [...messages].reverse().find(message => message.role === "user")?.content ?? "";
+  const commercialIntent = /(?:presupuesto|contrat|demostraci[oó]n|demo|contacto|mis datos|solicitar|quote|pricing|book a demo|contact details)/i.test(lastUserMessage);
 
   useEffect(() => {
     setMounted(true);
@@ -305,9 +316,10 @@ export default function AlfiaChat() {
             {messages.map((message, index) => (
               <div key={message.id} className={`${styles.message} ${message.role === "user" ? styles.userMessage : styles.assistantMessage}`}>
                 <span className={styles.speaker}>{message.role === "user" ? t.you : t.assistant}</span>
-                {message.content && <div className={styles.messageText}>{message.content}</div>}
+                {message.content && <div className={styles.messageText}><MessageContent content={message.content} /></div>}
                 {busy && index === messages.length - 1 && !message.content && <span className={styles.typing} aria-label={t.writing}><i /><i /><i /></span>}
                 {message.handoff && <ContactOptions language={language} messages={messages} />}
+                {message.role === "assistant" && index === messages.length - 1 && !message.handoff && !busy && commercialIntent && <div className={styles.contact}><LeadCapture language={language} /></div>}
               </div>
             ))}
           </div>
