@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import styles from "./alfia-chat.module.css";
+import LeadCapture from "./lead-capture";
 
 type Language = "es" | "en";
 type Message = {
@@ -79,6 +80,7 @@ function ContactOptions({ language, messages }: { language: Language; messages: 
         <a href="tel:+34679176667" className={styles.call}><Icon kind="phone" />{t.call}</a>
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.whatsapp} aria-label={language === "es" ? "Revisar mensaje y contactar por WhatsApp (se abre en otra pestaña)" : "Review message and contact on WhatsApp (opens in another tab)"}><Icon kind="whatsapp" />WhatsApp</a>
       </div>
+      <LeadCapture language={language} />
     </div>
   );
 }
