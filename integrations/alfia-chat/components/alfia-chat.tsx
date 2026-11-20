@@ -57,14 +57,27 @@ function Icon({ kind }: { kind: "close" | "send" | "reset" | "phone" | "whatsapp
   );
 }
 
-function ContactOptions({ language }: { language: Language }) {
+function ContactOptions({ language, messages }: { language: Language; messages: Message[] }) {
   const t = copy[language];
+  // A visitor initiates WhatsApp and can review or edit the composed message before sending.
+  // Do not silently transmit chat history to an external service.
+  const context = messages
+    .filter(message => message.role === "user")
+    .slice(-4)
+    .map(message => message.content.trim().slice(0, 250))
+    .filter(Boolean)
+    .join(" | ")
+    .slice(0, 750);
+  const summary = language === "es"
+    ? `Hola, contacto desde el asistente de Alfia. Me gustaría hablar sobre mi consulta: ${context || "soluciones de automatización para mi empresa"}`
+    : `Hello, I'm contacting you from the Alfia assistant. I'd like to discuss: ${context || "automation solutions for my company"}`;
+  const whatsappUrl = `https://wa.me/34679176667?text=${encodeURIComponent(summary)}`;
   return (
     <div className={styles.contact}>
       <span className={styles.contactTitle}>{t.contact} · {PHONE}</span>
       <div className={styles.contactActions}>
         <a href="tel:+34679176667" className={styles.call}><Icon kind="phone" />{t.call}</a>
-        <a href="https://wa.me/34679176667" target="_blank" rel="noopener noreferrer" className={styles.whatsapp} aria-label={language === "es" ? "Hablar por WhatsApp (se abre en otra pestaña)" : "Chat on WhatsApp (opens in a new tab)"}><Icon kind="whatsapp" />WhatsApp</a>
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.whatsapp} aria-label={language === "es" ? "Revisar mensaje y contactar por WhatsApp (se abre en otra pestaña)" : "Review message and contact on WhatsApp (opens in another tab)"}><Icon kind="whatsapp" />WhatsApp</a>
       </div>
     </div>
   );
@@ -292,7 +305,7 @@ export default function AlfiaChat() {
                 <span className={styles.speaker}>{message.role === "user" ? t.you : t.assistant}</span>
                 {message.content && <div className={styles.messageText}>{message.content}</div>}
                 {busy && index === messages.length - 1 && !message.content && <span className={styles.typing} aria-label={t.writing}><i /><i /><i /></span>}
-                {message.handoff && <ContactOptions language={language} />}
+                {message.handoff && <ContactOptions language={language} messages={messages} />}
               </div>
             ))}
           </div>
