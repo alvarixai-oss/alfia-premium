@@ -6,6 +6,7 @@
   position: fixed;
   z-index: 1000;
   right: max(22px, env(safe-area-inset-right));
+  max-width: calc(100% - max(22px, env(safe-area-inset-right)) - max(22px, env(safe-area-inset-left)));
   bottom: calc(20px + env(safe-area-inset-bottom) + var(--chat-keyboard-offset, 0px));
   display: flex;
   flex-direction: column;
@@ -29,6 +30,7 @@
 }
 .panel {
   width: min(398px, calc(100vw - 28px));
+  max-width: 100%;
   height: min(624px, calc(var(--chat-viewport-height, 100dvh) - 126px - env(safe-area-inset-bottom)));
   min-height: 230px;
   display: flex;
@@ -66,7 +68,7 @@
 .welcome p { margin: 8px 0 0; font-size: 13px; color: var(--text, #666); }
 .suggestions { display: grid; gap: 9px; }
 .suggestions button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 11px 13px; border: 1px solid color-mix(in srgb, var(--aqua) 35%, white); border-radius: 12px; background: color-mix(in srgb, var(--aqua) 4%, white); color: var(--navy); font-size: 12px; text-align: left; line-height: 1.45; transition: background 150ms ease, border-color 150ms ease; }
-.suggestions span { font-size: 16px; color: var(--navy-light); }
+.suggestions svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--navy-light); }
 .message { max-width: 95%; margin: 0 0 18px; }
 .speaker { display: block; margin: 0 0 5px 1px; font-size: 10px; font-weight: 700; color: var(--text, #666); }
 .messageText { padding: 12px 14px; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; border-radius: 15px; }
@@ -113,7 +115,7 @@
   .contactActions a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 @media (max-width: 480px) {
-  .root { right: max(12px, env(safe-area-inset-right)); bottom: calc(12px + env(safe-area-inset-bottom) + var(--chat-keyboard-offset, 0px)); gap: 9px; }
+  .root { right: max(12px, env(safe-area-inset-right)); max-width: calc(100% - max(12px, env(safe-area-inset-right)) - max(12px, env(safe-area-inset-left))); bottom: calc(12px + env(safe-area-inset-bottom) + var(--chat-keyboard-offset, 0px)); gap: 9px; }
   .panel { width: calc(100vw - 24px); height: min(610px, calc(var(--chat-viewport-height, 100dvh) - 90px - env(safe-area-inset-bottom))); border-radius: 20px; }
   .header { padding: 14px 12px; gap: 8px; }
   .heading h2 { font-size: 15px; }

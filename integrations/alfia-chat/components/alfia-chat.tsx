@@ -146,7 +146,7 @@ export default function AlfiaChat() {
   }, [open, panelId]);
 
   useEffect(() => {
-    if (open && followMessages.current && scrollArea.current) scrollArea.current.scrollTop = scrollArea.current.scrollHeight;
+    if (open && followMessages.current && scrollArea.current) scrollArea.current.scrollTop = messages.length ? scrollArea.current.scrollHeight : 0;
   }, [messages, busy, open]);
 
   const close = () => {
@@ -286,7 +286,7 @@ export default function AlfiaChat() {
           </header>
           <div className={styles.messages} ref={scrollArea} onScroll={() => { const el = scrollArea.current; if (el) followMessages.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; }} aria-label={language === "es" ? "Conversación con Alfia" : "Conversation with Alfia"}>
             <div className={styles.welcome}><strong>{t.welcome}</strong><p>{t.welcomeDetail}</p></div>
-            {messages.length === 0 && <div className={styles.suggestions}>{t.suggestions.map(suggestion => <button type="button" key={suggestion} onClick={() => void send(suggestion)} disabled={busy}>{suggestion}<span aria-hidden="true">↗</span></button>)}</div>}
+            {messages.length === 0 && <div className={styles.suggestions}>{t.suggestions.map(suggestion => <button type="button" key={suggestion} onClick={() => void send(suggestion)} disabled={busy}>{suggestion}<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 15 15 5M5 5h10v10" /></svg></button>)}</div>}
             {messages.map((message, index) => (
               <div key={message.id} className={`${styles.message} ${message.role === "user" ? styles.userMessage : styles.assistantMessage}`}>
                 <span className={styles.speaker}>{message.role === "user" ? t.you : t.assistant}</span>
